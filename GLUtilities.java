@@ -126,26 +126,43 @@ public class GLUtilities {
         return new GLGrid(n, grid);
     }
     
-    public int staticPatternSearch (int n, int m, int maxit) {
+    // Perform a static pattern search inside "interesting grids" of size m x m
+    public void staticPatternSearch (int n, int m) {
         int patterndim = (int) Math.pow(2, m*m);
         for (int i = 1; i < patterndim; i++) {
             GLGrid grid = new GLGrid(n, interestingGrid(n, m, i));
             GLGrid prev_grid = copyGrid(n, grid);
             grid.nextState();
-            for (int j = 0; j < maxit; j++) {
-                if (equalGrid(n, grid, prev_grid)) {
-                    //System.out.println("Found static pattern with seed: " + i);
-                    System.out.println(n + " " + 1 + " " + m + " " + i);
-                    break;
-                }
-                grid.nextState();
+            if (equalGrid(n, grid, prev_grid)) {
+                //System.out.println("Found static pattern with seed: " + i);
+                System.out.println(n + " " + 1 + " " + m + " " + i);
             }   
         }
-        return 0;
+    }
+    
+    public void oscillatoryPatternSearch (int n, int m, int period) {
+        int patterndim = (int) Math.pow(2, m*m);
+        for (int i = 0; i < patterndim; i++) {
+            GLGrid grid = new GLGrid(n, interestingGrid(n, m, i));
+            GLGrid prev_grid = copyGrid(n, grid);
+            GLGrid last_grid = copyGrid(n, grid);
+            for (int j = 1; j < period; j++) {
+                grid.nextState();
+                if (j == period - 1) {
+                    last_grid = copyGrid(n, grid);
+                }
+            }
+            grid.nextState();
+            if (equalGrid(n, grid, prev_grid) && !equalGrid(n, grid, last_grid)) {
+                //System.out.println("Found oscilatory pattern of period " + period + "with seed: " + i);
+                System.out.println(n + " " + 1 + " " + m + " " + i);
+            }
+        }
     }
     
     public static void main(String[] args) {
         GLUtilities utilities = new GLUtilities();
-        utilities.staticPatternSearch(20, 4, 10);
+        //utilities.staticPatternSearch(20, 4);
+        utilities.oscillatoryPatternSearch(20, 4, 2);
     }
 }

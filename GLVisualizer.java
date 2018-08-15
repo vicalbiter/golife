@@ -5,6 +5,7 @@ import edu.princeton.cs.algs4.StdDraw;
 public class GLVisualizer {
     
     private static final int DELAY = 500;
+    private static final int MAX_IT = 10000;
     
     public static void draw(int n, GLGrid grid) {
         StdDraw.setCanvasSize(1000, 1000);
@@ -43,8 +44,8 @@ public class GLVisualizer {
         }
     }
     
-    private static void animateGrid(int n, GLGrid glgrid) {
-        while (true) {
+    private static void animateGrid(int n, GLGrid glgrid, int maxit) {
+        for (int i = 0; i < maxit; i++) {
             updateDraw(n, glgrid);
             StdDraw.show();
             System.out.println(glgrid.aliveCells());
@@ -59,7 +60,7 @@ public class GLVisualizer {
         GLGrid glgrid = new GLGrid(n, utilities.interestingGrid(n, m, generator));
         draw(n, glgrid);
         StdDraw.show();
-        if (animate) { animateGrid(n, glgrid); }
+        if (animate) { animateGrid(n, glgrid, MAX_IT); }
     }
     
     // Show a grid from standard input (set the "animate" flag to true in order to
@@ -77,27 +78,30 @@ public class GLVisualizer {
         GLGrid glgrid = new GLGrid(n, utilities.randomGrid(n, density));
         draw(n, glgrid);
         StdDraw.show();
-        if (animate) { animateGrid(n, glgrid); }
+        if (animate) { animateGrid(n, glgrid, MAX_IT); }
     }
     
     // Helper method to manually check for patterns generated from a seed, coming from
     // standard input.
-    public static void manualPatternCheck(int n, String args) {
+    public static void manualPatternCheck(int n, String args, int maxit, boolean animate) {
         GLUtilities utilities = new GLUtilities();
         GLGrid glgrid = new GLGrid(n, utilities.standardInputGrid(args));
         draw(n, glgrid);
         StdDraw.show();
         StdDraw.pause(DELAY);
+        if (animate) { animateGrid(n, glgrid, maxit); }
     }
     
     public static void main (String[] args) {
         //showRandomGrid(30, 0.5, true); 
         //showStdInputGrid(4, false, args);
-        //showInterestingGrid(6, 4, 51313, true);
+        //showInterestingGrid(6, 4, 13260, true);
+        
         In in = new In(args[0]);
         String[] file = in.readAllLines();
         for (int i = 0; i < file.length; i++) {
-            manualPatternCheck(20, file[i]);
+            manualPatternCheck(20, file[i], 6, true);
         }
+        
     }
 }
