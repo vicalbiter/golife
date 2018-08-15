@@ -11,7 +11,7 @@ public class GLVisualizer {
         StdDraw.clear();
         StdDraw.setPenColor(StdDraw.WHITE);
         StdDraw.setXscale(-0.05*n, 1.05*n);
-        StdDraw.setYscale(-0.05*n, 1.05*n);   // leave a border to write text
+        StdDraw.setYscale(-0.05*n, 1.05*n);
         StdDraw.filledSquare(n/2.0, n/2.0, n/2.0);
         for (int row = 1; row <= n; row++) {
             for (int col = 1; col <= n; col++) {
@@ -42,19 +42,43 @@ public class GLVisualizer {
         }
     }
     
-    public static void main (String[] args) {
-        int dim = 50;
-        double prob = 0.1;
+    // Show an "interesting" (program-generated) grid
+    public static void showInterestingGrid(int n, int m, int generator, boolean animate) {
         GLUtilities utilities = new GLUtilities();
-        GLGrid glgrid = new GLGrid(dim, utilities.randomGrid(dim, prob));
-        draw(dim, glgrid);
+        GLGrid glgrid = new GLGrid(n, utilities.interestingGrid(n, m, generator));
+        draw(n, glgrid);
         StdDraw.show();
-        while (true) {
-            updateDraw(dim, glgrid);
-            StdDraw.show();
-            System.out.println(glgrid.aliveCells());
-            StdDraw.pause(DELAY);
-            glgrid.nextState();
+    }
+    
+    // Show a grid from standard input (set the "animate" flag to true in order to
+    // visualize a simulation of the GoL with this starting grid).
+    public static void showStdInputGrid(int n, boolean animate, String[] args) {
+        GLUtilities utilities = new GLUtilities();
+        GLGrid glgrid = new GLGrid(n, utilities.standardInputGrid(args));
+        draw(n, glgrid);
+        StdDraw.show();
+    }
+    
+    // Show a randomized grid
+    public static void showRandomGrid(int n, double density, boolean animate) {
+        GLUtilities utilities = new GLUtilities();
+        GLGrid glgrid = new GLGrid(n, utilities.randomGrid(n, density));
+        draw(n, glgrid);
+        StdDraw.show();
+        if (animate) {
+            while (true) {
+                updateDraw(n, glgrid);
+                StdDraw.show();
+                System.out.println(glgrid.aliveCells());
+                StdDraw.pause(DELAY);
+                glgrid.nextState();
+            }
         }
+    }
+    
+    public static void main (String[] args) {
+       //showRandomGrid(10, 0.5, false); 
+       //showStdInputGrid(4, false, args);
+       showInterestingGrid(20, 4, 1214, false);
     }
 }
