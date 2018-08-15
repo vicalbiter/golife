@@ -60,6 +60,9 @@ public class GLGrid {
                     if (neighbors < 2 || neighbors > 3) {
                         nextgrid[i][j] = false;
                     }
+                    else {
+                        nextgrid[i][j] = true;
+                    }
                 }
                 else {
                     int neighbors = aliveNeighbors(i, j);

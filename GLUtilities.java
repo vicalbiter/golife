@@ -1,3 +1,4 @@
+import java.util.Scanner;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdRandom; 
 
@@ -18,15 +19,25 @@ public class GLUtilities {
     }
     
     // Build a n x n grid with data coming from standard input (e.g. a text file) 
-    // Data should come in the format "n grid[0] grid[1]...grid[n-1]"
-    public boolean[][] standardInputGrid(String[] args) {
-        In in = new In(args[0]);
-        int n = in.readInt();
+    // Data should come in the format "n format data"
+    // Format 0 will read data in the form grid[0] grid[1]...grid[n-1]
+    // Format 1 will read data in the form of an "interesting grid" (m seed)
+    public boolean[][] standardInputGrid(String args) {
+        Scanner in = new Scanner(args);
+        int n = in.nextInt();
+        int format = in.nextInt();
         boolean[][] grid = new boolean[n][n];
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                grid[i][j] = in.readBoolean();
+        if (format == 0) {
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    grid[i][j] = in.nextBoolean();
+                }
             }
+        }
+        else {
+            int m = in.nextInt();
+            int seed = in.nextInt();
+            grid = interestingGrid(n, m, seed);
         }
         return grid;
     }
@@ -70,8 +81,8 @@ public class GLUtilities {
         return numbool;
     }
     
-    // Run a GoL within a predefined maximum number of state changes. Stop when the grid has
-    // stabilized (i.e. when all cells are static or dead).
+    // Run a GoL with a predefined maximum number of state changes. Stop when the grid has
+    // stabilized (i.e. when all cells are static or dead). Used for GLStats.
     public int runGL(GLGrid grid, int maxit) {
         int prev_alive = 0;
         int current_alive = 0;
@@ -80,7 +91,7 @@ public class GLUtilities {
             current_alive = grid.aliveCells();
             if (prev_alive == current_alive) {
                 count++;
-                if (count == 3) {
+                if (count == 9) {
                     return i;
                 }
             }
@@ -89,17 +100,52 @@ public class GLUtilities {
             grid.nextState();
         }
         return maxit;
+    }    
+    
+    // Method to check if two grids are equal
+    public boolean equalGrid(int n, GLGrid a, GLGrid b) {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (a.isAlive(i, j) == b.isAlive(i, j)) {
+                    continue;
+                }
+                else { return false; }
+            }
+        }
+        return true;
     }
     
-    public int staticPatternSearch (int n, int m) {
-        int iterations = (int) Math.pow(2, m);
-        for (int i = 0; i < iterations; i++) {
+    // Method to copy one grid into another one
+    public GLGrid copyGrid(int n, GLGrid glgrid) {
+        boolean[][] grid = new boolean[n][n];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                grid[i][j] = glgrid.isAlive(i, j);
+            }
+        }
+        return new GLGrid(n, grid);
+    }
+    
+    public int staticPatternSearch (int n, int m, int maxit) {
+        int patterndim = (int) Math.pow(2, m*m);
+        for (int i = 1; i < patterndim; i++) {
             GLGrid grid = new GLGrid(n, interestingGrid(n, m, i));
+            GLGrid prev_grid = copyGrid(n, grid);
+            grid.nextState();
+            for (int j = 0; j < maxit; j++) {
+                if (equalGrid(n, grid, prev_grid)) {
+                    //System.out.println("Found static pattern with seed: " + i);
+                    System.out.println(n + " " + 1 + " " + m + " " + i);
+                    break;
+                }
+                grid.nextState();
+            }   
         }
         return 0;
     }
     
     public static void main(String[] args) {
-        
+        GLUtilities utilities = new GLUtilities();
+        utilities.staticPatternSearch(20, 4, 10);
     }
 }

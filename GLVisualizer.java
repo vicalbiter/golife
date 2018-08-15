@@ -1,9 +1,10 @@
 import java.awt.Font;
+import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
 
 public class GLVisualizer {
     
-    private static final int DELAY = 200;
+    private static final int DELAY = 500;
     
     public static void draw(int n, GLGrid grid) {
         StdDraw.setCanvasSize(1000, 1000);
@@ -42,17 +43,28 @@ public class GLVisualizer {
         }
     }
     
+    private static void animateGrid(int n, GLGrid glgrid) {
+        while (true) {
+            updateDraw(n, glgrid);
+            StdDraw.show();
+            System.out.println(glgrid.aliveCells());
+            StdDraw.pause(DELAY);
+            glgrid.nextState();
+        }
+    }
+    
     // Show an "interesting" (program-generated) grid
     public static void showInterestingGrid(int n, int m, int generator, boolean animate) {
         GLUtilities utilities = new GLUtilities();
         GLGrid glgrid = new GLGrid(n, utilities.interestingGrid(n, m, generator));
         draw(n, glgrid);
         StdDraw.show();
+        if (animate) { animateGrid(n, glgrid); }
     }
     
     // Show a grid from standard input (set the "animate" flag to true in order to
     // visualize a simulation of the GoL with this starting grid).
-    public static void showStdInputGrid(int n, boolean animate, String[] args) {
+    public static void showStdInputGrid(int n, boolean animate, String args) {
         GLUtilities utilities = new GLUtilities();
         GLGrid glgrid = new GLGrid(n, utilities.standardInputGrid(args));
         draw(n, glgrid);
@@ -65,20 +77,27 @@ public class GLVisualizer {
         GLGrid glgrid = new GLGrid(n, utilities.randomGrid(n, density));
         draw(n, glgrid);
         StdDraw.show();
-        if (animate) {
-            while (true) {
-                updateDraw(n, glgrid);
-                StdDraw.show();
-                System.out.println(glgrid.aliveCells());
-                StdDraw.pause(DELAY);
-                glgrid.nextState();
-            }
-        }
+        if (animate) { animateGrid(n, glgrid); }
+    }
+    
+    // Helper method to manually check for patterns generated from a seed, coming from
+    // standard input.
+    public static void manualPatternCheck(int n, String args) {
+        GLUtilities utilities = new GLUtilities();
+        GLGrid glgrid = new GLGrid(n, utilities.standardInputGrid(args));
+        draw(n, glgrid);
+        StdDraw.show();
+        StdDraw.pause(DELAY);
     }
     
     public static void main (String[] args) {
-       //showRandomGrid(10, 0.5, false); 
-       //showStdInputGrid(4, false, args);
-       showInterestingGrid(20, 4, 1214, false);
+        //showRandomGrid(30, 0.5, true); 
+        //showStdInputGrid(4, false, args);
+        //showInterestingGrid(6, 4, 51313, true);
+        In in = new In(args[0]);
+        String[] file = in.readAllLines();
+        for (int i = 0; i < file.length; i++) {
+            manualPatternCheck(20, file[i]);
+        }
     }
 }
