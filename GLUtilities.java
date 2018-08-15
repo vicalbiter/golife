@@ -35,8 +35,8 @@ public class GLUtilities {
     // square sitting in the middle of the bigger grid. The "generator" should be a number
     // from 0 to pow(2, m). This shall be transformed into a binary number. The resulting
     // characters are then plugged into the m x m grid one by one.
-    public boolean[][] interestingGrid(int n, int m, int generator) {
-        boolean[] genbool = toBoolean(generator, m*m);
+    public boolean[][] interestingGrid(int n, int m, int seed) {
+        boolean[] seedbool = toBoolean(seed, m*m);
         boolean[][] grid = new boolean[n][n];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
@@ -48,7 +48,7 @@ public class GLUtilities {
         int k = 0;
         for (int i = lower; i < upper; i++) {
             for (int j = lower; j < upper; j++) {
-                grid[i][j] = genbool[k];
+                grid[i][j] = seedbool[k];
                 k++;
             }
         }
@@ -56,7 +56,7 @@ public class GLUtilities {
     }
     
     // Helper method to transform an integer into a binary array
-    private static boolean[] toBoolean(int num, int dim) {
+    public boolean[] toBoolean(int num, int dim) {
         int numint = num;
         boolean[] numbool = new boolean[dim];
         for (int i = 0; i < dim; i++) {
@@ -66,7 +66,6 @@ public class GLUtilities {
             }
             else { numbool[i] = false; }
             numint = numint / 2;
-            System.out.println(numint);
         }
         return numbool;
     }
@@ -92,11 +91,15 @@ public class GLUtilities {
         return maxit;
     }
     
-    public static void main(String[] args) {
-        boolean[] test = toBoolean(7, 5);
-        for (int i = 0; i < test.length; i++) {
-            if(test[i]) { System.out.print("1"); }
-            else { System.out.print("0"); }
+    public int staticPatternSearch (int n, int m) {
+        int iterations = (int) Math.pow(2, m);
+        for (int i = 0; i < iterations; i++) {
+            GLGrid grid = new GLGrid(n, interestingGrid(n, m, i));
         }
+        return 0;
+    }
+    
+    public static void main(String[] args) {
+        
     }
 }
