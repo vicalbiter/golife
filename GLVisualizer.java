@@ -44,6 +44,7 @@ public class GLVisualizer {
         }
     }
     
+    // Run a Game of Life animation from a ceratin starting grid
     private static void animateGrid(int n, GLGrid glgrid, int maxit) {
         for (int i = 0; i < maxit; i++) {
             updateDraw(n, glgrid);
@@ -102,9 +103,9 @@ public class GLVisualizer {
     }
     
     public static void main (String[] args) {
-        //showRandomGrid(30, 0.5, true); 
+        showRandomGrid(100, 0.5, true); 
         //showStdInputGrid(4, false, args);
         //showInterestingGrid(30, 3, 115, true);
-        showPatterns(30, 6, true, args);
+        //showPatterns(30, 6, true, args);
     }
 }

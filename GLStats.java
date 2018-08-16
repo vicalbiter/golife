@@ -7,6 +7,10 @@ public class GLStats {
     private double density;
     private int max_gridit = 1000;
     
+    // Perform a montecarlo simulation over a predefined number of trials,
+    // with different densities over games limited by a certain amount of iterations (generations)
+    // When a certain game has died off (all its cells have stabilized, or died), print the number
+    // of iterations it took to do, along with its starting density so to standard output
     public GLStats(int n, int mc_trials, int pmin, int pmax, int step) {
         GLUtilities utilities = new GLUtilities();
         double density = pmin*0.1;

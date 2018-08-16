@@ -8,6 +8,8 @@ public class GLGrid {
     private boolean[][] changes;
     private int n;
     private int alive = 0;
+    private int NEIGHBORS_LOWERBOUND = 2;
+    private int NEIGHBORS_UPPERBOUND = 3;
     
     public GLGrid(int n, boolean[][] grid) {
         this.n = n;
@@ -24,14 +26,17 @@ public class GLGrid {
         }
     }
     
+    // Is the (row, col) cell alive?
     public boolean isAlive(int row, int col) {
         return grid[row][col];
     }
     
+    // Return the number of alive cells in the current grid 
     public int aliveCells() {
         return alive;
     }
     
+    // Calculate how many alive neighbors does a cell have
     private int aliveNeighbors(int row, int col) {
         int neighbors = 0;
         if (isAlive(validate(row - 1), validate(col))) { neighbors++; }
@@ -45,19 +50,25 @@ public class GLGrid {
         return neighbors;
     }
     
+    // Helper method to "blend" all the grid boundaries so that they are continuous
     private int validate(int value) {
         if (value == -1) { return n - 1; }
         else if (value == n) { return 0; }
         else { return value; }
     }
     
+    // Update the grid according to the Game of Life rules
+    // These rules can be changed with the following global static variables:
+    // NEIGHBORS_LOWERBOUND: When this limint isn't reached, living cells die of loneliness
+    // NEIGHBORS_UPERBOUND: When this limit is reached, dead cells come to life. When surpassed,
+    // living cells die of overpopulation
     public void nextState() {
         alive = 0;
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 if (isAlive(i, j)) {
                     int neighbors = aliveNeighbors(i, j);
-                    if (neighbors < 2 || neighbors > 3) {
+                    if (neighbors < NEIGHBORS_LOWERBOUND || neighbors > NEIGHBORS_UPPERBOUND) {
                         nextgrid[i][j] = false;
                     }
                     else {
@@ -66,7 +77,7 @@ public class GLGrid {
                 }
                 else {
                     int neighbors = aliveNeighbors(i, j);
-                    if (neighbors == 3) {
+                    if (neighbors == NEIGHBORS_UPPERBOUND) {
                         nextgrid [i][j] = true;
                     }
                 }
@@ -81,10 +92,12 @@ public class GLGrid {
         }
     }
     
+    // Helper method to determine whether if a certain cell changed in the last generation
     public boolean cellChange(int row, int col) {
         return changes[row][col];
     }
     
+    // Helper method to print the current grid to standard output
     public void printGrid(int n, boolean[][] grid) {
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
