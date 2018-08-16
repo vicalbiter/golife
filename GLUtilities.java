@@ -127,7 +127,7 @@ public class GLUtilities {
     }
     
     // Perform a static pattern search inside "interesting grids" of size m x m
-    public void staticPatternSearch (int n, int m) {
+    public void staticPatternSearch(int n, int m) {
         int patterndim = (int) Math.pow(2, m*m);
         for (int i = 1; i < patterndim; i++) {
             GLGrid grid = new GLGrid(n, interestingGrid(n, m, i));
@@ -140,7 +140,8 @@ public class GLUtilities {
         }
     }
     
-    public void oscillatoryPatternSearch (int n, int m, int period) {
+    // Perform an oscillatory pattern search inside "interesting grids" of size m x m
+    public void oscillatoryPatternSearch(int n, int m, int period) {
         int patterndim = (int) Math.pow(2, m*m);
         for (int i = 0; i < patterndim; i++) {
             GLGrid grid = new GLGrid(n, interestingGrid(n, m, i));
@@ -160,9 +161,51 @@ public class GLUtilities {
         }
     }
     
+    // Perform a movement pattern search inside "interesting grids" of size m x m
+    public void movementPatternSearch(int n, int m, int maxit) {
+        int patterndim = (int) Math.pow(2, m*m);
+        for (int i = 0; i < patterndim; i++) {
+            GLGrid grid = new GLGrid(n, interestingGrid(n, m, i));
+            int prev_alive = 0;
+            int current_alive = 0;
+            int count = 0;
+            boolean expansion = false;
+            for (int j = 1; j < maxit; j++) {
+                current_alive = grid.aliveCells();
+                if (!expansion && expansionDetected(2, n - 2, grid)) {
+                    expansion = true;
+                }
+                if (expansion && (prev_alive == current_alive)) {
+                    count++;
+                    if (count > 20) {
+                        //System.out.println("Found movement pattern with seed: " + i);
+                        System.out.println(n + " " + 1 + " " + m + " " + i);
+                        break;
+                    }
+                }
+                prev_alive = current_alive;
+                grid.nextState();
+            }
+        }
+        
+    }
+        
+    // Helper method to detect when the cells crossed a specified 
+    // area in the middle of the n x n grid.
+    public boolean expansionDetected(int lower, int upper, GLGrid grid) {
+        for (int i = lower; i < upper; i++) {
+            if (grid.isAlive(lower, i)) { return true; } // Upper boundary
+            if (grid.isAlive(upper, i)) { return true; } // Lower boundary
+            if (grid.isAlive(i, lower)) { return true; } // Left boundary
+            if (grid.isAlive(i, upper)) { return true; } // Right boundary
+        }
+        return false;
+    }
+    
     public static void main(String[] args) {
         GLUtilities utilities = new GLUtilities();
         //utilities.staticPatternSearch(20, 4);
-        utilities.oscillatoryPatternSearch(20, 4, 2);
+        //utilities.oscillatoryPatternSearch(20, 4, 2);
+        utilities.movementPatternSearch(30, 3, 100);
     }
 }

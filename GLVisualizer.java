@@ -81,6 +81,15 @@ public class GLVisualizer {
         if (animate) { animateGrid(n, glgrid, MAX_IT); }
     }
     
+    // Show patterns stored in a text file
+    public static void showPatterns(int n, int maxit, boolean animate, String[] args) {
+        In in = new In(args[0]);
+        String[] file = in.readAllLines();
+        for (int i = 0; i < file.length; i++) {
+            manualPatternCheck(n, file[i], maxit, true);
+        }
+    }
+    
     // Helper method to manually check for patterns generated from a seed, coming from
     // standard input.
     public static void manualPatternCheck(int n, String args, int maxit, boolean animate) {
@@ -95,13 +104,7 @@ public class GLVisualizer {
     public static void main (String[] args) {
         //showRandomGrid(30, 0.5, true); 
         //showStdInputGrid(4, false, args);
-        //showInterestingGrid(6, 4, 13260, true);
-        
-        In in = new In(args[0]);
-        String[] file = in.readAllLines();
-        for (int i = 0; i < file.length; i++) {
-            manualPatternCheck(20, file[i], 6, true);
-        }
-        
+        //showInterestingGrid(30, 3, 115, true);
+        showPatterns(30, 6, true, args);
     }
 }
